@@ -12,7 +12,7 @@
 │   ├── README.md                本文件
 │   └── build-and-deploy.txt     编译与部署说明（原「编译和部署必看」两份合并）
 │
-├── smartpro/                    【终端】T113 下位机源码，可执行文件 TARGET = smartpro
+├── smartclient/                    【终端】T113 下位机源码，可执行文件                   |                                    TARGET=smartclient
 │   ├── camera/                  摄像头模块：V4L2 采集 + UDP 推流服务
 │   ├── managers/                业务管理器：人脸 / 指纹 / 密码 / 音频
 │   ├── pcm/                     提示音资源（.pcm 烧写文件 + .wav 原始文件）
@@ -25,7 +25,7 @@
 │   ├── form_finger.*            指纹录入界面
 │   ├── form_passwd.*            密码输入界面
 │   ├── widget.*                 主界面
-│   ├── smartpro.pro             Qt 工程文件
+│   ├── smartclient.pro             Qt 工程文件
 │   └── res.qrc                  Qt 资源文件
 │
 ├── smartserver/                 【服务器】上位机源码，运行于虚拟机
@@ -45,7 +45,7 @@
     └── 中文字体乱码问题.png        中文乱码处理参考截图
 ```
 
-> 说明：`smartserver/` 与 `manual-deploy/` 内部的目录名保持原有英文命名；顶层三个业务目录已统一改为英文名（原 `smartpronew` → `smartpro`，原 `需要手动部署` → `manual-deploy`）。
+> 说明：`smartserver/` 与 `manual-deploy/` 内部的目录名保持原有英文命名；顶层三个业务目录已统一改为英文名（原 `smartclientnew` → `smartclient`，原 `需要手动部署` → `manual-deploy`）。
 > 改名不影响编译：`.pro`、`.qrc`、`#include` 中均未引用顶层目录名，仅 `*.pro.user` 里残留了旧路径，Qt Creator 会自动重建。
 
 ---
@@ -61,11 +61,11 @@
 | 工程 | 文件 | 行号 | 宏 |
 |---|---|---|---|
 | smartserver | `smartserver/widget.h` | 16-19 | `SELF_IP`、`DEVICE_IP` |
-| smartpro | `smartpro/widget.h` | 59-62 | `SERVER_IP`、`SELF_IP` |
+| smartclient | `smartclient/widget.h` | 59-62 | `SERVER_IP`、`SELF_IP` |
 
 **2. 编译终端**
 
-用 Qt Creator 打开 `smartpro/smartpro.pro`，选择 T113 构建套件编译，将生成的 `smartpro` 拷贝到开发板并 `chmod +x ./smartpro`。
+用 Qt Creator 打开 `smartclient/smartclient.pro`，选择 T113 构建套件编译，将生成的 `smartclient` 拷贝到开发板并 `chmod +x ./smartclient`。
 
 **3. 部署依赖文件**
 
@@ -92,7 +92,7 @@
 
 ## 四、功能模块
 
-**终端（smartpro）**
+**终端（smartclient）**
 
 | 模块 | 文件 | 说明 |
 |---|---|---|
@@ -118,13 +118,13 @@
 
 以下几处引用与实际文件不一致，编译时可能报错，建议一并修正：
 
-1. **`smartpro/res.qrc` 引用了不存在的图片**
+1. **`smartclient/res.qrc` 引用了不存在的图片**
    `pics/mybg002.png`、`pics/smartpg.png`、`pics/deviceback.png` 这三个文件在 `pics/` 目录中不存在，`rcc` 编译资源时会失败。删除对应行，或补齐图片文件。
 
-2. **`smartpro/smartpro.pro:43` 引用了不存在的头文件**
+2. **`smartclient/smartclient.pro:43` 引用了不存在的头文件**
    `HEADERS` 中的 `camera_sender.h` 在工程里不存在（qmake 会给出警告）。
 
-3. **`smartpro/widget.cpp` 硬编码了服务器 IP**
+3. **`smartclient/widget.cpp` 硬编码了服务器 IP**
    第 202 行与第 206 行写死为 `"192.168.1.4"`，没有使用 `widget.h` 中的 `SERVER_IP` 宏。改 IP 时这两处不会跟随生效，建议改成 `SERVER_IP`。
 
 4. **文档行号已按当前源码校正**
